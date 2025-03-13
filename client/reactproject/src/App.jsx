@@ -5,6 +5,9 @@ import viteLogo from '/vite.svg'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Home from './components/Home';
+import Register from './view/Register'
+import Cvprocess from './view/Cvprocess';
+import  Login from './view/Login'
 
 function App() {
 
@@ -14,8 +17,15 @@ function App() {
         <Routes>
         <Route path='/' element ={<Home/>}></Route>
         {/* <Route  path='/'element={< NavBar/>}></Route> */}
+        <Route path='/register' element ={<Register/>}></Route>
+        <Route path='/process' element ={<Cvprocess/>}></Route>
+        <Route path='/login' element ={<Login/>}></Route>
+
+
+
         </Routes>
       </Router>
+      
     </>
   )
 }
