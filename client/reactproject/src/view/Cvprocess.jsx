@@ -103,15 +103,29 @@ function Cvprocess() {
   // PDF Export
   const handleExportPDF = () => {
     const input = document.getElementById('preview-section');
-    html2canvas(input).then((canvas) => {
+    html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const imgWidth = 210; // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      let heightLeft = imgHeight;
+      let position = 0;
+      // first page:
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+      //subsequent pages:
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+      
       pdf.save(`${personalInfo.fullName || 'cv'}.pdf`);
     });
   };
+
 
   // Clear all data
   const handleClearAll = () => {
@@ -222,50 +236,10 @@ function Cvprocess() {
               </div>
             )}
           </div>
-          <div id="preview-section" className="preview-section">
-          <div className="preview-section">
-            <h1>Full Name</h1>
-            <h3>{personalInfo.fullName }</h3>
-            <h1>Job Title</h1>
-            <h2>{personalInfo.jobTitle }</h2>
-            
-            <div className="contact-info">
-              <p>{personalInfo.email}</p>
-              <p>{personalInfo.phone}</p>
-              <h1>LinkedIn</h1>
-              <p>{personalInfo.linkedIn}</p>
-            </div>
-    
-            <h3>Work Experience</h3>
-            {experiences.map((exp, index) => (
-              <div key={index} className="experience-preview">
-                <h4>{exp.company}</h4>
-                <p>{exp.duration}</p>
-                <p>{exp.description}</p>
-              </div>
-            ))}
-    
-            <h3>Education</h3>
-            {educations.map((edu, index) => (
-              <div key={index} className="education-preview">
-
-                <h4>{edu.school}</h4>
-                <p>{edu.degree}</p>
-                <p>{edu.years}</p>
-              </div>
-            ))}
-
-    
-            <h3>Skills</h3>
-            <div className="skills-preview">
-              {skills.map((skill, index) => (
-                
-                <span key={index} className="skill-tag">{skill}</span>
-            ))}
-
-
-            
-        <div className="actions">
+      </div>
+      {/* ******************************* */}
+      
+      <div className="actions">
           <button className="btn-secondary" onClick={handleClearAll}>
             Clear All Data
           </button>
@@ -273,27 +247,56 @@ function Cvprocess() {
             Export as PDF
           </button>
         </div>
-      </div>
-
-
+        {/* ******************************* */}
+        <div id="preview-section" className="preview-section ats-style">
+          <header>
+            <h1 className="name">{personalInfo.fullName}</h1>
+            <h2 className="job-title">{personalInfo.jobTitle}</h2>
+            <div className="contact-info">
+              <p>{personalInfo.email} | {personalInfo.phone}</p>
+              {personalInfo.linkedIn && <p>LinkedIn: {personalInfo.linkedIn}</p>}
             </div>
-          </div>
+          </header>
+
+          <section className="professional-experience">
+            <h3>PROFESSIONAL EXPERIENCE</h3>
+            {experiences.map((exp, index) => (
+              <div key={index} className="experience-item">
+                <h4>{exp.company}</h4>
+                <p className="duration">{exp.duration}</p>
+                <ul className="description">
+                  {exp.description.split('\n').map((line, i) => (
+                    line.trim() && <li key={i}>{line.trim()}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+
+          <section className="education">
+            <h3>EDUCATION</h3>
+            {educations.map((edu, index) => (
+              <div key={index} className="education-item">
+                <h4>{edu.school}</h4>
+                <p>{edu.degree} | {edu.years}</p>
+              </div>
+            ))}
+          </section>
+
+          <section className="skills">
+            <h3>SKILLS</h3>
+            <ul className="skills-list">
+              {skills.map((skill, index) => (
+                <li key={index}>{skill}</li>
+              ))}
+            </ul>
+          </section>
+         
         </div>
-        </>
-      )
-   
-
-
-
-
-
-
-
-
-
-
-
-
+      <div/>
+      <div/>
+    </>
+  );
 }
 
-export default Cvprocess
+export default Cvprocess;

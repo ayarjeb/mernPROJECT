@@ -8,6 +8,7 @@ import Home from './components/Home';
 import Register from './view/Register'
 import Cvprocess from './view/Cvprocess';
 import  Login from './view/Login'
+import Dashboard from './view/Dashboard';
 
 function App() {
 
@@ -20,6 +21,8 @@ function App() {
         <Route path='/register' element ={<Register/>}></Route>
         <Route path='/process' element ={<Cvprocess/>}></Route>
         <Route path='/login' element ={<Login/>}></Route>
+        <Route path='/dash' element ={<Dashboard/>}></Route>
+
 
 
 
